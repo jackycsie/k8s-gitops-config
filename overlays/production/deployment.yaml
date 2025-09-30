@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-app-example
+spec:
+  replicas: 5
+  template:
+    spec:
+      containers:
+      - name: app
+        image: ghcr.io/jackycsie/k8s-app-example:latest
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
