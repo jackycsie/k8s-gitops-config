@@ -45,7 +45,7 @@ spec:
             path: /var/run/docker.sock
       containers:
         - name: jenkins
-          image: jenkins/jenkins:lts-jdk11-with-docker
+          image: jenkins/jenkins:2.516.3-jdk21
           ports:
             - containerPort: 8080
               name: http
