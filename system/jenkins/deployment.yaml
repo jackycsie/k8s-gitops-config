@@ -35,7 +35,6 @@ spec:
       labels:
         app: myjenkins
     spec:
-      # ⚠️ 關鍵：Pod Security Context 設為 Root
       securityContext:
         runAsUser: 0
         runAsGroup: 0
@@ -45,9 +44,8 @@ spec:
           hostPath:
             path: /var/run/docker.sock
       containers:
-        # ⚠️ 關鍵：主 Jenkins 容器 (將以 Root 身份運行)
         - name: jenkins
-          image: jenkins/jenkins:2.516.3-jdk21
+          image: jenkins/jenkins:lts-jdk11-with-docker
           ports:
             - containerPort: 8080
               name: http
