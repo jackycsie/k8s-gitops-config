@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: myjenkins
+  namespace: jenkins
+  labels:
+    app: myjenkins
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: http
+    - port: 50000
+      targetPort: 50000
+      protocol: TCP
+      name: agent
+  selector:
+    app: myjenkins
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: myjenkins
+  namespace: jenkins
+spec:
+  selector:
+    matchLabels:
+      app: myjenkins
+  serviceName: myjenkins
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: myjenkins
+    spec:
+      # ⚠️ 關鍵：Pod Security Context 設為 Root
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+        fsGroup: 0
+      volumes:
+        - name: docker-sock
+          hostPath:
+            path: /var/run/docker.sock
+      containers:
+        # ⚠️ 關鍵：主 Jenkins 容器 (將以 Root 身份運行)
+        - name: jenkins
+          image: jenkins/jenkins:2.516.3-jdk21
+          ports:
+            - containerPort: 8080
+              name: http
+            - containerPort: 50000
+              name: agent
+          volumeMounts:
+            - name: jenkins-home
+              mountPath: /var/jenkins_home
+            - name: docker-sock
+              mountPath: /var/run/docker.sock
+  volumeClaimTemplates:
+    - metadata:
+        name: jenkins-home
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 8Gi
