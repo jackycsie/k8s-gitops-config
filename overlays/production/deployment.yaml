@@ -8,7 +8,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: ghcr.io/jackycsie/k8s-app-example:12-6719333
+        image: ghcr.io/jackycsie/k8s-app-example:13-3fcadd3
         resources:
           requests:
             memory: "128Mi"
